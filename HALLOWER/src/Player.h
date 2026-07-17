@@ -3,10 +3,12 @@
 
 #include "raylib.h"
 #include "Timer.h"
+#include "AnimatedSprite.h"
 
 class Player
 {
 private:
+    AnimatedSprite playerRender = AnimatedSprite("Art/playerSheet.png", Vector2{24, 24});
     Vector2 dir;
     float zPos;
     float acc;
@@ -33,7 +35,6 @@ private:
         DIVING
     } PLAYERSTATE;
     PLAYERSTATE playerState;
-    Texture2D playerRender;
     Vector2 renderDir;
 
     Vector2 Normalize(Vector2 oldDir);

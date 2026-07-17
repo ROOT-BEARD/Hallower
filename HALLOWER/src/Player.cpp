@@ -2,6 +2,7 @@
 #include "Timer.h"
 #include "iostream"
 #include "cmath"
+#include "AnimatedSprite.h"
 
 Player::Player()
 {
@@ -13,10 +14,10 @@ Player::Player()
     cooldown = 1.25f;
     curSpeed = 0.0f;
     burrowed = false;
-    acc = 0.25f;
-    walkSpeed = 5.0f;
-    burrowSpeed = 10.0f;
-    topSpeed = 10.0f;
+    acc = 0.1f;
+    walkSpeed = 2.5f;
+    burrowSpeed = 5.0f;
+    topSpeed = 5.0f;
     walking = false;
     render = {playerPos.x, playerPos.y, 32, 32}; // used to hold what character the player is
     burrowTimer = Timer(burrowTime);
@@ -27,7 +28,12 @@ Player::Player()
     jumpVel = 250.0f;
     jumping = false;
     playerState = IDLE;
-    playerRender = LoadTexture("Art/characterSheet.png");
+    playerRender.addAnimation("spin", 0, 0, 4, 4);
+    playerRender.addAnimation("walk(up)", 1, 8, 4, 4);
+    playerRender.addAnimation("walk(down)", 1, 0, 4, 4);
+    playerRender.addAnimation("walk(horizontal)", 1, 4, 4, 4);
+
+    playerRender.playAnimation("spin");
 }
 
 // gets two varibes && returns a normalized vector
@@ -97,28 +103,36 @@ void Player::getDir()
 
 void Player::Draw()
 {
-    int mul = 0;
     if (renderDir.x < -0.05f)
     {
-        mul = 6;
+        playerRender.playAnimation("walk(horizontal)");
+        playerRender.flipped = true;
     }
     else if (renderDir.x > 0.05f)
     {
-        mul = 2;
+        playerRender.playAnimation("walk(horizontal)");
+        playerRender.flipped = false;
     }
     else if (renderDir.y > 0.05f)
     {
-        mul = 0;
+        playerRender.playAnimation("walk(down)");
     }
     else if (renderDir.y < -0.05f)
     {
-        mul = 4;
+        playerRender.playAnimation("walk(up)");
+    }
+    else
+    {
+        playerRender.playAnimation("spin");
     }
 
     Vector2 drawPos = {playerPos.x, playerPos.y - zPos};
     render = {playerPos.x, playerPos.y - zPos, 32, 32};
-    DrawRectangle((int)playerPos.x + 22, (int)playerPos.y + 72, 32, 4, BLACK);
-    // DrawRectangleRec(render, playerState == BURROWING ? BLACK : ORANGE);
+    DrawRectangle(playerPos.x + 6, playerPos.y + 19, 12, 2, DARKGRAY);
+
+    playerRender.position = drawPos;
+    playerRender.Update();
+
     int row = 0;
     if (playerState == IDLE)
     {
@@ -128,8 +142,6 @@ void Player::Draw()
     {
         row = 2;
     }
-    Rectangle source = {(float)(72 * mul), (float)(72 * row), 72.0f, 72.0f};
-    DrawTextureRec(playerRender, source, drawPos, WHITE);
 }
 
 void Player::Colliding()

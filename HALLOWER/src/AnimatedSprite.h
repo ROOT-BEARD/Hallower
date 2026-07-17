@@ -14,7 +14,9 @@ private:
     Rectangle source;
 
 public:
+    bool flipped;
     Vector2 spriteSize;
+    Vector2 position;
     Texture2D SpriteSheet;
     int SheetWidth;
     int SheetHeight;

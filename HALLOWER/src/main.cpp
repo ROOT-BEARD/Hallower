@@ -17,11 +17,6 @@ int main()
     RenderTexture2D gameRender = LoadRenderTexture(windowSize.x, windowSize.y);
 
     Player player;
-    Vector2 spriteSize = {24, 24};
-    // simple sprite used to test the Animated sprite class
-    AnimatedSprite sprite = AnimatedSprite("Art/playerSheet.png", spriteSize);
-    sprite.addAnimation("spin", 0, 0, 4, 4);
-    sprite.playAnimation("spin");
 
     Rectangle wall = {320, 320, 64, 64};
 
@@ -39,7 +34,6 @@ int main()
         ClearBackground(BLUE);
         DrawRectangleRec(wall, GRAY);
         player.Update();
-        sprite.Update();
 
         EndTextureMode();
 
