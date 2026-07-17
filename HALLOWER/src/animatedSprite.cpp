@@ -17,9 +17,9 @@ AnimatedSprite::AnimatedSprite(const std::string SpriteSheet, Vector2 spriteSize
     flipped = false;
 }
 
-void AnimatedSprite::addAnimation(std::string name, int row, int startFrame, int frames, int fps)
+void AnimatedSprite::addAnimation(std::string name, int row, int startFrame, int frames, int fps, bool looping)
 {
-    Animations[name] = animation{name, row, startFrame, frames, fps};
+    Animations[name] = animation{name, row, startFrame, frames, fps, looping};
     std::cout << Animations.size() << std::endl;
 }
 
@@ -40,15 +40,21 @@ void AnimatedSprite::playAnimation(std::string name)
 void AnimatedSprite::Update()
 {
     frameCount++;
+    bool complete;
     int curfps = Animations[currentAnimation].fps;
-    if (frameCount >= (60 / curfps))
+    if (Animations[currentAnimation].looping && complete)
     {
-        frameCount = 0;
-        curFrame++;
-        int endFrame = Animations[currentAnimation].startFrame + Animations[currentAnimation].frames;
-        if (curFrame >= endFrame)
+        if (frameCount >= (60 / curfps))
         {
-            curFrame = Animations[currentAnimation].startFrame;
+            complete = false;
+            frameCount = 0;
+            curFrame++;
+            int endFrame = Animations[currentAnimation].startFrame + Animations[currentAnimation].frames;
+            if (curFrame >= endFrame)
+            {
+                curFrame = Animations[currentAnimation].startFrame;
+                complete = true;
+            }
         }
     }
     source.y = (spriteSize.y * Animations[currentAnimation].row);

@@ -33,18 +33,18 @@ Player::Player()
 
 void Player::addAnimations()
 {
-    playerRender.addAnimation("spin", 0, 0, 4, 4);
-    playerRender.addAnimation("walk(up)", 1, 8, 4, 4);
-    playerRender.addAnimation("walk(down)", 1, 0, 4, 4);
-    playerRender.addAnimation("walk(horizontal)", 1, 4, 4, 4);
-    playerRender.addAnimation("idle(up)", 0, 2, 1, 1);
-    playerRender.addAnimation("idle(down)", 0, 0, 1, 1);
-    playerRender.addAnimation("idle(horizontal)", 0, 1, 1, 1);
-    playerRender.addAnimation("borrow", 3, 0, 1, 1);
-    playerRender.addAnimation("jump(down)", 2, 0, 2, 12);
-    playerRender.addAnimation("jump(up)", 2, 10, 2, 12);
-    playerRender.addAnimation("jump(horizontal)", 2, 5, 2, 12);
-    playerRender.addAnimation("dive", 0, 0, 1, 1);
+    playerRender.addAnimation("spin", 0, 0, 4, 4, true);
+    playerRender.addAnimation("walk(up)", 1, 8, 4, 4, true);
+    playerRender.addAnimation("walk(down)", 1, 0, 4, 4, true);
+    playerRender.addAnimation("walk(horizontal)", 1, 4, 4, 4, true);
+    playerRender.addAnimation("idle(up)", 0, 2, 1, 1, true);
+    playerRender.addAnimation("idle(down)", 0, 0, 1, 1, true);
+    playerRender.addAnimation("idle(horizontal)", 0, 1, 1, 1, true);
+    playerRender.addAnimation("borrow", 3, 0, 1, 1, true);
+    playerRender.addAnimation("jump(down)", 2, 0, 2, 12, false);
+    playerRender.addAnimation("jump(up)", 2, 10, 2, 12, false);
+    playerRender.addAnimation("jump(horizontal)", 2, 5, 2, 12, false);
+    playerRender.addAnimation("dive", 0, 0, 1, 1, true);
 }
 
 // gets two varibes && returns a normalized vector
