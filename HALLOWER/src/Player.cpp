@@ -6,7 +6,6 @@
 
 Player::Player()
 {
-    renderDir = Vector2{0.0f, 0.0f};
     dir = Vector2{0.0f, 0.0f};
     zPos = 0;
     playerPos = Vector2{32.0f, 32.0f};
@@ -15,9 +14,9 @@ Player::Player()
     curSpeed = 0.0f;
     burrowed = false;
     acc = 0.1f;
-    walkSpeed = 2.5f;
-    burrowSpeed = 5.0f;
-    topSpeed = 5.0f;
+    walkSpeed = 1.5f;
+    burrowSpeed = 3.0f;
+    topSpeed = 3.0f;
     walking = false;
     render = {playerPos.x, playerPos.y, 32, 32}; // used to hold what character the player is
     burrowTimer = Timer(burrowTime);
@@ -28,12 +27,24 @@ Player::Player()
     jumpVel = 250.0f;
     jumping = false;
     playerState = IDLE;
+    renderDir = DOWN;
+    addAnimations();
+}
+
+void Player::addAnimations()
+{
     playerRender.addAnimation("spin", 0, 0, 4, 4);
     playerRender.addAnimation("walk(up)", 1, 8, 4, 4);
     playerRender.addAnimation("walk(down)", 1, 0, 4, 4);
     playerRender.addAnimation("walk(horizontal)", 1, 4, 4, 4);
-
-    playerRender.playAnimation("spin");
+    playerRender.addAnimation("idle(up)", 0, 2, 1, 1);
+    playerRender.addAnimation("idle(down)", 0, 0, 1, 1);
+    playerRender.addAnimation("idle(horizontal)", 0, 1, 1, 1);
+    playerRender.addAnimation("borrow", 3, 0, 1, 1);
+    playerRender.addAnimation("jump(down)", 2, 0, 2, 12);
+    playerRender.addAnimation("jump(up)", 2, 10, 2, 12);
+    playerRender.addAnimation("jump(horizontal)", 2, 5, 2, 12);
+    playerRender.addAnimation("dive", 0, 0, 1, 1);
 }
 
 // gets two varibes && returns a normalized vector
@@ -72,10 +83,12 @@ void Player::getDir()
     if (IsKeyDown(KEY_D))
     {
         dir.x = 1;
+        playerRender.flipped = false;
     }
     else if (IsKeyDown(KEY_A))
     {
         dir.x = -1;
+        playerRender.flipped = true;
     }
     else
         dir.x = 0;
@@ -91,41 +104,27 @@ void Player::getDir()
     else
         dir.y = 0;
 
+    if (playerState != IDLE)
+    {
+        if (dir.y == 1)
+            renderDir = DOWN;
+        else if (dir.y == -1)
+            renderDir = UP;
+        else if (dir.x == 1)
+            renderDir = HORIZONTAL;
+        else if (dir.x == -1)
+            renderDir = HORIZONTAL;
+    }
+
+    // nomarlize the direction if moving diagonally
     if (dir.x != 0 && dir.y != 0)
     {
         dir = Normalize(dir);
-    }
-    if (dir.x != 0 || dir.y != 0)
-    {
-        renderDir = dir;
     }
 }
 
 void Player::Draw()
 {
-    if (renderDir.x < -0.05f)
-    {
-        playerRender.playAnimation("walk(horizontal)");
-        playerRender.flipped = true;
-    }
-    else if (renderDir.x > 0.05f)
-    {
-        playerRender.playAnimation("walk(horizontal)");
-        playerRender.flipped = false;
-    }
-    else if (renderDir.y > 0.05f)
-    {
-        playerRender.playAnimation("walk(down)");
-    }
-    else if (renderDir.y < -0.05f)
-    {
-        playerRender.playAnimation("walk(up)");
-    }
-    else
-    {
-        playerRender.playAnimation("spin");
-    }
-
     Vector2 drawPos = {playerPos.x, playerPos.y - zPos};
     render = {playerPos.x, playerPos.y - zPos, 32, 32};
     DrawRectangle(playerPos.x + 6, playerPos.y + 19, 12, 2, DARKGRAY);
@@ -254,6 +253,7 @@ void Player::Update()
     burrowTimer.Update();
     burrowCooldown.Update();
     hangTimer.Update();
+    playerRender.playAnimation(animationChart[playerState][renderDir]);
 
     if (burrowCooldown.TimeOut())
     {
